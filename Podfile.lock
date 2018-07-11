@@ -1,0 +1,16 @@
+PODS:
+  - LaunchStep (1.0.0)
+
+DEPENDENCIES:
+  - LaunchStep (from `./`)
+
+EXTERNAL SOURCES:
+  LaunchStep:
+    :path: "./"
+
+SPEC CHECKSUMS:
+  LaunchStep: 8cd48b2f4b780fe728d71124a695d8c6752c0927
+
+PODFILE CHECKSUM: c16552e20c6a1891fb33f20b0ecce67e12c177c1
+
+COCOAPODS: 1.5.3
