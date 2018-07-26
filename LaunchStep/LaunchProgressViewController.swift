@@ -89,13 +89,19 @@ public class LaunchProgressViewController: UIViewController {
         
         controller.launch(launchSteps: launchSteps, simultaneous: simultaneous, progress: { [weak self] amount in
             DispatchQueue.main.async {
-                self?.progressView.progress = amount
+                let currentProgress = self?.progressView.progress ?? 0
+                // Progress should be between 0 and 1, and never go backwards
+                self?.progressView.progress = max(0, min(max(amount, currentProgress), 1))
             }
         }, completion: {
             DispatchQueue.main.async {
                 completion()
             }
         })
+    }
+    
+    public override var prefersStatusBarHidden: Bool {
+        return true
     }
     
 }
