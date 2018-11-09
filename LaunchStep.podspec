@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "LaunchStep"
-  s.version      = "1.0.2"
+  s.version      = "1.1.0"
   s.summary      = "Launch progress with progress bar."
   s.author       = 'Stephan Heilner'
   s.homepage     = "https://github.com/stephanheilner/LaunchStep"
@@ -12,5 +12,5 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '10.0'
   s.source_files  = 'LaunchStep/*.{swift}'
   s.requires_arc = true
-  s.swift_version = '4.1'
+  s.swift_version = '4.2'
 end

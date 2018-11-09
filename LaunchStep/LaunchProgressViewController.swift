@@ -1,5 +1,5 @@
 
-public class LaunchProgressViewController: UIViewController {
+open class LaunchProgressViewController: UIViewController {
     
     fileprivate lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -22,7 +22,7 @@ public class LaunchProgressViewController: UIViewController {
     fileprivate let launchSteps: [LaunchStep]
     fileprivate let controller = LaunchStepController()
     
-    public init(launchScreenStoryboard: UIStoryboard, blurEffectStyle: UIBlurEffectStyle = .dark, title: String? = nil, progressTintColor: UIColor? = nil, launchSteps: [LaunchStep]) {
+    public init(launchScreenStoryboard: UIStoryboard, blurEffectStyle: UIBlurEffect.Style = .dark, title: String? = nil, progressTintColor: UIColor? = nil, launchSteps: [LaunchStep]) {
         self.launchSteps = launchSteps
         
         super.init(nibName: nil, bundle: nil)
@@ -30,9 +30,9 @@ public class LaunchProgressViewController: UIViewController {
         guard let launchViewController = launchScreenStoryboard.instantiateInitialViewController() else { return }
         launchViewController.view.translatesAutoresizingMaskIntoConstraints = false
         
-        addChildViewController(launchViewController)
+        addChild(launchViewController)
         view.addSubview(launchViewController.view)
-        launchViewController.didMove(toParentViewController: self)
+        launchViewController.didMove(toParent: self)
 
         if let progressTintColor = progressTintColor {
             progressView.progressTintColor = progressTintColor
@@ -76,7 +76,7 @@ public class LaunchProgressViewController: UIViewController {
         return launchSteps.filter { $0.shouldRun() }.contains(where: { $0.showProgress() })
     }
     
-    public func startLaunchSteps(simultaneous: Bool, completion: @escaping () -> Void) {
+    open func startLaunchSteps(simultaneous: Bool, completion: @escaping () -> Void) {
         guard !launchSteps.filter({ $0.shouldRun() }).isEmpty else {
             // No Launch Steps to run
             completion()
@@ -100,7 +100,7 @@ public class LaunchProgressViewController: UIViewController {
         })
     }
     
-    public override var prefersStatusBarHidden: Bool {
+    open override var prefersStatusBarHidden: Bool {
         return true
     }
     
