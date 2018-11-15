@@ -59,6 +59,11 @@ class LaunchStepController {
     }
     
     func execute(launchStep: LaunchStep, completion: (() -> Void)? = nil) {
+        guard launchStep.shouldRun() else {
+            completion?()
+            return
+        }
+
         self.dispatchGroup.enter()
         launchStep.execute(progress: { amount in
             self.progress?((self.totalProgress + amount) / self.numberOfLaunchSteps)

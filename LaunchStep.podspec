@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "LaunchStep"
-  s.version      = "1.1.0"
+  s.version      = "1.2.0"
   s.summary      = "Launch progress with progress bar."
   s.author       = 'Stephan Heilner'
   s.homepage     = "https://github.com/stephanheilner/LaunchStep"
