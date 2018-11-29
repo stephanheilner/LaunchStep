@@ -33,8 +33,8 @@ class LaunchStepController {
                 execute(launchStep: launchSteps[index])
             }
         }
-        dispatchGroup.notify(queue: dispatchQueue) {
-            self.completion?()
+        dispatchGroup.notify(queue: dispatchQueue) { [weak self] in
+            self?.completion?()
         }
     }
     
@@ -49,7 +49,9 @@ class LaunchStepController {
             }
             
             let launchStep = self.remainingLaunchSteps.remove(at: 0)
-            self.execute(launchStep: launchStep) {
+            self.execute(launchStep: launchStep) { [weak self] in
+                guard let self = self else { return }
+                
                 if !self.remainingLaunchSteps.isEmpty {
                     self.performNextLaunchStep()
                 }
@@ -59,17 +61,13 @@ class LaunchStepController {
     }
     
     func execute(launchStep: LaunchStep, completion: (() -> Void)? = nil) {
-        guard launchStep.shouldRun() else {
-            completion?()
-            return
-        }
-
         self.dispatchGroup.enter()
-        launchStep.execute(progress: { amount in
+        launchStep.execute(progress: { [weak self] amount in
+            guard let self = self else { return }
             self.progress?((self.totalProgress + amount) / self.numberOfLaunchSteps)
-        }, completion: {
-            self.totalProgress += 1.0
-            self.dispatchGroup.leave()
+        }, completion: { [weak self] in
+            self?.totalProgress += 1.0
+            self?.dispatchGroup.leave()
             completion?()
         })
     }

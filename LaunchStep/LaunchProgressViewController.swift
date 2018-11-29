@@ -23,7 +23,7 @@ open class LaunchProgressViewController: UIViewController {
     fileprivate let controller = LaunchStepController()
     
     public init(launchScreenStoryboard: UIStoryboard, blurEffectStyle: UIBlurEffect.Style = .dark, title: String? = nil, progressTintColor: UIColor? = nil, launchSteps: [LaunchStep]) {
-        self.launchSteps = launchSteps
+        self.launchSteps = launchSteps.filter { $0.shouldRun() }
         
         super.init(nibName: nil, bundle: nil)
 
@@ -73,11 +73,11 @@ open class LaunchProgressViewController: UIViewController {
     }
     
     fileprivate func showProgress() -> Bool {
-        return launchSteps.filter { $0.shouldRun() }.contains(where: { $0.showProgress() })
+        return launchSteps.contains(where: { $0.showProgress() })
     }
     
     open func startLaunchSteps(simultaneous: Bool, completion: @escaping () -> Void) {
-        guard !launchSteps.filter({ $0.shouldRun() }).isEmpty else {
+        guard !launchSteps.isEmpty else {
             // No Launch Steps to run
             completion()
             return
@@ -88,7 +88,7 @@ open class LaunchProgressViewController: UIViewController {
         titleLabel.isHidden = hideProgress
         
         controller.launch(launchSteps: launchSteps, simultaneous: simultaneous, progress: { [weak self] amount in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
                 let currentProgress = self?.progressView.progress ?? 0
                 // Progress should be between 0 and 1, and never go backwards
                 self?.progressView.progress = max(0, min(max(amount, currentProgress), 1))

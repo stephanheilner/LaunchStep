@@ -14,8 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         var launchSteps = [LaunchStep]()
         for _ in 0..<10 {
             launchSteps.append(ShowProgressLaunchStep())
@@ -23,15 +22,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let viewController = ViewController(nibName: nil, bundle: nil)
         window = UIWindow(frame: UIScreen.main.bounds)
-        
-        let launchProgressViewController = LaunchProgressViewController(launchScreenStoryboard: UIStoryboard(name: "LaunchScreen", bundle: Bundle.main), title: "Launching Demo")
-        launchProgressViewController.launchSteps = launchSteps
+
+        let navigationController = UINavigationController(rootViewController: viewController)
+
+        let launchProgressViewController = LaunchProgressViewController(launchScreenStoryboard: UIStoryboard(name: "LaunchScreen", bundle: Bundle.main), title: "Launching Demo", launchSteps: launchSteps)
         window?.rootViewController = launchProgressViewController
-        launchProgressViewController.startLaunchSteps(simultaneous: true) { [weak self] in
-            self?.window?.rootViewController = UINavigationController(rootViewController: viewController)
-            launchProgressViewController.dismiss(animated: true, completion: nil)
-        }
         window?.makeKeyAndVisible()
+        
+        launchProgressViewController.startLaunchSteps(simultaneous: true) {
+            navigationController.willMove(toParent: launchProgressViewController)
+            launchProgressViewController.addChild(navigationController)
+            launchProgressViewController.view.addSubview(navigationController.view)
+            navigationController.didMove(toParent: launchProgressViewController)
+        }
         
         return true
     }
