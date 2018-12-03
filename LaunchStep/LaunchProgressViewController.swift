@@ -22,6 +22,9 @@ open class LaunchProgressViewController: UIViewController {
     fileprivate let launchSteps: [LaunchStep]
     fileprivate let controller = LaunchStepController()
     
+    public var statusBarHidden: Bool = true
+    public var statusBarStyle: UIStatusBarStyle = .lightContent
+    
     public init(launchScreenStoryboard: UIStoryboard, blurEffectStyle: UIBlurEffect.Style = .dark, title: String? = nil, progressTintColor: UIColor? = nil, launchSteps: [LaunchStep]) {
         self.launchSteps = launchSteps.filter { $0.shouldRun() }
         
@@ -101,7 +104,11 @@ open class LaunchProgressViewController: UIViewController {
     }
     
     open override var prefersStatusBarHidden: Bool {
-        return true
+        return statusBarHidden
+    }
+    
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
+        return statusBarStyle
     }
     
 }

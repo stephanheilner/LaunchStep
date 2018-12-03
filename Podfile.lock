@@ -1,5 +1,5 @@
 PODS:
-  - LaunchStep (1.2.0)
+  - LaunchStep (1.2.2)
 
 DEPENDENCIES:
   - LaunchStep (from `./`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  LaunchStep: 3653d9efec346535120e31dd70d4ad8aeb3d83bf
+  LaunchStep: 361830715ed737d1264f5fb054d9fb834afd87b6
 
 PODFILE CHECKSUM: c16552e20c6a1891fb33f20b0ecce67e12c177c1
 
