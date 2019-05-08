@@ -18,10 +18,12 @@ class LaunchStepController {
     fileprivate var completion: (() -> Void)?
     
     fileprivate let dispatchGroup = DispatchGroup()
-    fileprivate let dispatchQueue = DispatchQueue(label: "com.hf.LaunchStep.LaunchStepController.DispatchQueue", qos: .userInitiated)
+    fileprivate let dispatchQueue = DispatchQueue(label: "com.hf.LaunchStep.LaunchStepController.dispatchQueue", qos: .userInitiated)
+    fileprivate let remainingLaunchStepsQueue = DispatchQueue(label: "com.hf.LaunchStep.LaunchStepController.remainingLaunchStepsQueue")
     
     func launch(launchSteps: [LaunchStep], simultaneous: Bool, progress: ((Float) -> Void)? = nil, completion: (() -> Void)? = nil) {
-        self.remainingLaunchSteps = launchSteps
+        remainingLaunchStepsQueue.sync { self.remainingLaunchSteps = launchSteps }
+        
         self.numberOfLaunchSteps = Float(launchSteps.count)
         self.progress = progress
         self.completion = completion
@@ -42,20 +44,19 @@ class LaunchStepController {
         dispatchGroup.enter()
         
         dispatchQueue.async {
-            guard !self.remainingLaunchSteps.isEmpty else {
+            guard self.remainingLaunchStepsQueue.sync(execute: { !self.remainingLaunchSteps.isEmpty }) else {
                 // Finished Launch Steps
                 self.dispatchGroup.leave()
                 return
             }
             
-            let launchStep = self.remainingLaunchSteps.remove(at: 0)
+            let launchStep = self.remainingLaunchStepsQueue.sync { self.remainingLaunchSteps.remove(at: 0) }
             self.execute(launchStep: launchStep) { [weak self] in
-                guard let self = self else { return }
-                
-                if !self.remainingLaunchSteps.isEmpty {
-                    self.performNextLaunchStep()
+                if self?.remainingLaunchStepsQueue.sync(execute: { self?.remainingLaunchSteps.isEmpty }) == false {
+                    self?.performNextLaunchStep()
                 }
-                self.dispatchGroup.leave()
+                
+                self?.dispatchGroup.leave()
             }
         }
     }
