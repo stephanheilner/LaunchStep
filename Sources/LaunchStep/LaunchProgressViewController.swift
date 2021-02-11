@@ -1,3 +1,7 @@
+import Foundation
+
+#if canImport(UIKit)
+import UIKit
 
 open class LaunchProgressViewController: UIViewController {
     
@@ -18,7 +22,7 @@ open class LaunchProgressViewController: UIViewController {
         progressView.translatesAutoresizingMaskIntoConstraints = false
         return progressView
     }()
-
+    
     fileprivate let launchSteps: [LaunchStep]
     fileprivate let controller = LaunchStepController()
     
@@ -45,7 +49,7 @@ open class LaunchProgressViewController: UIViewController {
         self.launchSteps = launchSteps.filter { $0.shouldRun() }
         
         super.init(nibName: nil, bundle: nil)
-
+        
         guard let launchViewController = launchScreenStoryboard.instantiateInitialViewController() else { return }
         launchViewController.view.translatesAutoresizingMaskIntoConstraints = false
         let progressCenterYAnchorView = progressCenterYAnchorViewTag.flatMap { launchViewController.view.viewWithTag($0) }
@@ -53,7 +57,7 @@ open class LaunchProgressViewController: UIViewController {
         addChild(launchViewController)
         view.addSubview(launchViewController.view)
         launchViewController.didMove(toParent: self)
-
+        
         if let progressTintColor = progressTintColor {
             progressView.progressTintColor = progressTintColor
         }
@@ -62,7 +66,7 @@ open class LaunchProgressViewController: UIViewController {
             titleLabel.text = title
             titleLabel.isHidden = false
         }
-
+        
         var blurEffectView: UIVisualEffectView?
         if let blurEffectStyle = blurEffectStyle {
             let blurView = UIVisualEffectView(effect: UIBlurEffect(style: blurEffectStyle))
@@ -117,7 +121,7 @@ open class LaunchProgressViewController: UIViewController {
             completion()
             return
         }
-
+        
         let hideProgress = !showProgress()
         progressView.isHidden = hideProgress
         titleLabel.isHidden = hideProgress
@@ -144,3 +148,6 @@ open class LaunchProgressViewController: UIViewController {
     }
     
 }
+#else
+
+#endif
