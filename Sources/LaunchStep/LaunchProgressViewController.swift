@@ -34,7 +34,7 @@ open class LaunchProgressViewController: UIViewController {
     ///   - blurEffectStyle: blur effect applied to the background (default is dark blur)
     ///   - title: title above the progress bar
     ///   - progressTintColor: progress tint color
-    ///   - progressCenterYAnchorViewTag: this may be a tag for a view in the storyboard to anchor the progress bar's vertical center to (default is vertical center)
+    ///   - progressCenterYOffset: this sets the distance that the progress bar's vertical center will be offset from the center of the view
     ///   - progressWidthRatio: ratio of progress bar width to launch screen width (default is 0.9)
     ///   - progressMaxWidth: maximum progress bar width (default is none)
     ///   - launchSteps: launch steps
