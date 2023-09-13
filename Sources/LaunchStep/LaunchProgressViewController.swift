@@ -30,6 +30,82 @@ open class LaunchProgressViewController: UIViewController {
     public var statusBarStyle: UIStatusBarStyle = .lightContent
     
     /// - Parameters:
+    ///   - launchViewController: launch screen background
+    ///   - blurEffectStyle: blur effect applied to the background (default is dark blur)
+    ///   - title: title above the progress bar
+    ///   - progressTintColor: progress tint color
+    ///   - progressCenterYOffset: this sets the distance that the progress bar's vertical center will be offset from the center of the view
+    ///   - progressWidthRatio: ratio of progress bar width to launch screen width (default is 0.9)
+    ///   - progressMaxWidth: maximum progress bar width (default is none)
+    ///   - launchSteps: launch steps
+    public init(launchViewController: UIViewController,
+                blurEffectStyle: UIBlurEffect.Style? = .dark,
+                title: String? = nil,
+                progressTintColor: UIColor? = nil,
+                progressCenterYOffset: CGFloat? = nil,
+                progressWidthRatio: CGFloat = 0.9,
+                progressMaxWidth: CGFloat? = nil,
+                launchSteps: [LaunchStep]) {
+        self.launchSteps = launchSteps.filter { $0.shouldRun() }
+        
+        super.init(nibName: nil, bundle: nil)
+        
+        launchViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        addChild(launchViewController)
+        view.addSubview(launchViewController.view)
+        launchViewController.didMove(toParent: self)
+        
+        if let progressTintColor = progressTintColor {
+            progressView.progressTintColor = progressTintColor
+        }
+        
+        if let title = title {
+            titleLabel.text = title
+            titleLabel.isHidden = false
+        }
+        
+        var blurEffectView: UIVisualEffectView?
+        if let blurEffectStyle = blurEffectStyle {
+            let blurView = UIVisualEffectView(effect: UIBlurEffect(style: blurEffectStyle))
+            blurView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(blurView)
+            blurEffectView = blurView
+        }
+        
+        view.addSubview(titleLabel)
+        view.addSubview(progressView)
+        
+        let progressWidthRatioConstraint = progressView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: progressWidthRatio)
+        progressWidthRatioConstraint.priority = .defaultLow
+        
+        var constraints = [
+            launchViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            launchViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            launchViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            launchViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            progressView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            progressView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: (progressCenterYOffset ?? 0)),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: progressView.topAnchor, constant: -10),
+            progressWidthRatioConstraint
+        ]
+        
+        if let progressMaxWidth = progressMaxWidth {
+            constraints.append(progressView.widthAnchor.constraint(lessThanOrEqualToConstant: progressMaxWidth))
+        }
+        
+        if let blurEffectView = blurEffectView {
+            constraints.append(blurEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor))
+            constraints.append(blurEffectView.topAnchor.constraint(equalTo: view.topAnchor))
+            constraints.append(blurEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor))
+            constraints.append(blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor))
+        }
+        
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    /// - Parameters:
     ///   - launchScreenStoryboard: launch screen background
     ///   - blurEffectStyle: blur effect applied to the background (default is dark blur)
     ///   - title: title above the progress bar
@@ -106,7 +182,7 @@ open class LaunchProgressViewController: UIViewController {
         
         NSLayoutConstraint.activate(constraints)
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
