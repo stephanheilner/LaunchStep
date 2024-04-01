@@ -17,7 +17,10 @@ let package = Package(
     targets: [
         .target(
             name: "LaunchStep",
-            dependencies: []),
+            dependencies: [],
+            path: "Sources/LaunchStep",
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
         .testTarget(
             name: "LaunchStepTests",
             dependencies: ["LaunchStep"]),
